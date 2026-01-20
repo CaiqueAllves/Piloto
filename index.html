@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2>Acesse sua conta</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="userId" required placeholder=" " autocomplete="username">
+                    <label for="userId">ID</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required placeholder=" " autocomplete="current-password">
+                    <label for="password">Senha</label>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                </div>
+                <button type="submit" class="btn-primary">Acessar</button>
+                <div id="errorMsg" class="error-message"></div>
+            </form>
+            <div class="footer-text">
+                <p>Não tem uma conta? <a href="#">Solicite acesso</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA PRINCIPAL (HOME) -->
+    <div id="homeScreen" class="screen">
+        <header class="header">
+            <div class="logo-header">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>DocManager</span>
+            </div>
+            <div class="user-info">
+                <span id="userPlan" class="plan-badge plan-beta">BETA</span>
+                <span id="userName" class="user-name">Usuário</span>
+                <button onclick="logout()" class="logout-btn">Sair</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="welcome-banner">
+                <h1 id="welcomeTitle">Bem-vindo!</h1>
+                <h1 id="userId"></h1>
+                <p id="dateInfo"></p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Plano Atual</h3>
+                    <div class="stat-value" id="currentPlan">BETA</div>
+                    <div class="stat-details" id="planLimits">5 criados + 5 uploads</div>
+                    <button class="upgrade-btn" onclick="showUpgrade()">Fazer Upgrade</button>
+                </div>
+                <div class="stat-card">
+                    <h3>Documentos Criados</h3>
+                    <div class="stat-value">
+                        <span id="docsCreated">0</span> / <span id="maxCreate">5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="createProgress"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Uploads Realizados</h3>
+                    <div class="stat-value">
+                        <span id="docsUploaded">0</span> / <span id="maxUpload">5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="uploadProgress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn create" onclick="createDocument()">
+                    <span class="icon">➕</span>
+                    <span>Criar Documento</span>
+                </button>
+                <button class="action-btn list" onclick="showUserScreen()">
+                    <span class="icon">📋</span>
+                    <span>Meus Documentos</span>
+                </button>
+                <button class="action-btn upload" onclick="uploadDocument()">
+                    <span class="icon">📤</span>
+                    <span>Subir Documentos</span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- TELA DO USUÁRIO -->
+    <div id="userScreen" class="screen">
+        <header class="header">
+            <div class="logo-header">
+                <button onclick="showHomeScreen()" class="back-btn">← Voltar</button>
+                <span>Meus Documentos</span>
+            </div>
+            <button onclick="logout()" class="logout-btn">Sair</button>
+        </header>
+
+        <main class="user-content">
+            <div class="user-info-panel">
+                <h2>Informações do Usuário</h2>
+                <div class="info-card">
+                    <div class="info-item">
+                        <span class="label">Nome:</span>
+                        <span class="value" id="infoName">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Empresa:</span>
+                        <span class="value" id="infoCompany">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Cargo:</span>
+                        <span class="value" id="infoRole">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">País:</span>
+                        <span class="value" id="infoCountry">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Telefone:</span>
+                        <span class="value" id="infoPhone">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="documents-panel">
+                <h2>Documentos <span id="docCount">(0)</span></h2>
+                <div id="documentsList" class="documents-list">
+                    <p class="empty-state">Nenhum documento encontrado. Crie seu primeiro documento!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE UPLOAD -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Escolha o tipo de upload</h3>
+                <span class="close" onclick="closeUploadModal()">×</span>
+            </div>
+            <div class="upload-options">
+                <button class="upload-option" onclick="selectUploadType('google')">
+                    <span class="icon">📊</span>
+                    <span>Planilha Google</span>
+                </button>
+                <button class="upload-option" onclick="selectUploadType('excel')">
+                    <span class="icon">📈</span>
+                    <span>Excel</span>
+                </button>
+                <button class="upload-option" onclick="selectUploadType('word')">
+                    <span class="icon">📝</span>
+                    <span>Word</span>
+                </button>
+                <button class="upload-option manual" onclick="selectUploadType('manual')">
+                    <span class="icon">✏️</span>
+                    <span>Inserir Manualmente</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
